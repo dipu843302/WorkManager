@@ -10,7 +10,7 @@ import kotlin.math.log
 class Filtering(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
     override fun doWork(): Result {
         return try {
-            for (i in 0..100){
+            for (i in 0..5){
                 Log.d("MYTAG","filtering $i")
             }
             Result.success()
@@ -18,4 +18,5 @@ class Filtering(context: Context, workerParams: WorkerParameters) : Worker(conte
             Result.failure()
         }
     }
+
 }

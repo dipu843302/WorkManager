@@ -2,10 +2,10 @@ package com.example.workmanager
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.work.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,18 +27,15 @@ class MainActivity : AppCompatActivity() {
 
         val filtering=OneTimeWorkRequest.Builder(Filtering::class.java)
             .build()
-        val compressing=OneTimeWorkRequest.Builder(Compressing::class.java)
+
+        val compressing=OneTimeWorkRequest.Builder(Compressing::class.java).setInitialDelay(5000,TimeUnit.MILLISECONDS)
             .build()
 
-        val uploadRequest: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UploadWorker::class.java)
-            .setConstraints(constraints)
+        val uploadRequest: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UploadWorker::class.java).setInitialDelay(5000,TimeUnit.MILLISECONDS)
+           // .setConstraints(constraints)
             .build()
 
-        workManager
-            .beginWith(uploadRequest)
-            .then(filtering)
-            .then(compressing)
-            .enqueue()
+        workManager.enqueue(uploadRequest)
 
         workManager.getWorkInfoByIdLiveData(uploadRequest.id)
             .observe(this, Observer {
