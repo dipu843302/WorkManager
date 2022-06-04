@@ -14,6 +14,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -43,7 +45,8 @@ class UploadWorker(context: Context, workerParams: WorkerParameters) :
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
-            val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -64,6 +67,11 @@ class UploadWorker(context: Context, workerParams: WorkerParameters) :
         with(NotificationManagerCompat.from(applicationContext)) {
             notify(notification_id, builder.build())
         }
+    }
+
+    private fun isAppOnForeground(): Boolean {
+        return ProcessLifecycleOwner.get().lifecycle.currentState
+            .isAtLeast(Lifecycle.State.STARTED)
     }
 
 }
